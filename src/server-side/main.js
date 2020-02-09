@@ -2,23 +2,38 @@ const express = require('express');
 const google = require('googleapis').google;
 const jwt = require('jsonwebtoken');
 const cors = require('cors');
-// Google's OAuth2 client
+const bodyParser = require('body-parser');
+
 const OAuth2 = google.auth.OAuth2;
-// Including our config file
-const CONFIG = require('./server');
-// Creating our express application
+const CONFIG = require('./google-credentials');
 const app = express();
-// Allowing ourselves to use cookies
 const cookieParser = require('cookie-parser');
+
+var mysql = require('mysql');
+
 app.use(cookieParser());
 app.use(cors());
-// Setting up EJS Views
-app.set('view engine', 'ejs');
 app.set('views', __dirname);
+app.use(bodyParser.urlencoded({ extended: true }));
+app.use(bodyParser.json());
+
 // Listen on the port defined in the config file
-app.listen(CONFIG.port, function () {
+app.listen(CONFIG.port, () => {
   console.log(`Listening on port ${CONFIG.port}`);
 });
+
+var con = mysql.createConnection({
+  host: 'localhost',
+  user: 'newuser',
+  password: 'B0813aran()16',
+  database: 'olx-app',
+});
+
+con.connect((err) => {
+  if (err) throw err;
+  console.log('Connected!');
+});
+
 app.get('/link', (req, res) => {
   // eslint-disable-next-line max-len
   const oauth2Client = new OAuth2(CONFIG.oauth2Credentials.client_id, CONFIG.oauth2Credentials.client_secret, CONFIG.oauth2Credentials.redirect_uris[0]);
@@ -48,4 +63,12 @@ app.get('/auth_callback', (req, res) => {
       return res.redirect('http://localhost:8080/dashboard/');
     });
   }
+});
+
+app.post('/user', (req, res) => {
+  console.log(req.body);
+  res.sendStatus(200);
+  con.query('INSERT INTO test SET ?', (req.body), (err, result) => {
+    if(err) throw err;
+  });
 });

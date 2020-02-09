@@ -1,28 +1,28 @@
 <template>
   <div class="home">
-    <a v-bind:href="event">Login</a>
+    <a v-bind:href="link">Login</a>
   </div>
 </template>
 
 <script>
-import EventService from '@/Services/EventService';
+import GoogleService from '@/Services/GoogleService';
 
 export default {
   name: 'Home',
   data() {
     return {
-      event: {},
+      link: {},
     };
   },
   created() {
-    this.getEvents();
+    this.getLink();
   },
   methods: {
-    async getEvents() {
-      EventService.getEvents()
+    async getLink() {
+      GoogleService.getLink()
         .then(
           ((event) => {
-            this.$set(this, 'event', event);
+            this.$set(this, 'link', event);
           }),
         );
     },
