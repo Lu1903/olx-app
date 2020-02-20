@@ -69,6 +69,10 @@ app.post('/user', (req, res) => {
   console.log(req.body);
   res.sendStatus(200);
   con.query('INSERT INTO test SET ?', (req.body), (err, result) => {
-    if(err) throw err;
+    if (err) throw err;
   });
+});
+
+app.get('/test', (req, res) => {
+  console.log(req.cookies);
 });
