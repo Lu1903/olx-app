@@ -5,8 +5,8 @@
       <router-link to="/dashboard">dashboard</router-link>
       <router-link to="/add">add new</router-link>
       <router-link to="/show">show mine</router-link>
+      {{link}}
     </div>
-    {{cokies}}
   </div>
 </template>
 <script>
@@ -16,19 +16,20 @@ export default {
   name: 'Dashboard',
   data() {
     return {
-      cokies: {},
+      link: {},
     };
   },
   created() {
-    this.getCooookie();
+    this.getLink();
   },
   methods: {
-    async getCooookie() {
-      GoogleService.test().then(
-        ((event) => {
-          this.$set(this, 'cokies', event);
-        }),
-      );
+    async getLink() {
+      GoogleService.test()
+        .then(
+          ((event) => {
+            this.$set(this, 'link', event);
+          }),
+        );
     },
   },
 };

@@ -11,7 +11,7 @@ export default {
     return res.data;
   },
   async test() {
-    const res = await axios.get('http://localhost:3000/test');
+    const res = await axios.get('http://localhost:3000/test', { withCredentials: true });
     return res.data;
   },
 };

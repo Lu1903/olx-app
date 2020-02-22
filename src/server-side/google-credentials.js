@@ -18,7 +18,7 @@ module.exports = {
     ],
     scopes: [
       'profile',
-      // 'https://www.googleapis.com/auth/youtube.readonly',
+      'https://www.googleapis.com/auth/userinfo.email',
     ],
   },
 };
