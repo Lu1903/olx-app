@@ -52,6 +52,8 @@ oauth2Client.on('tokens', (tokens) => {
   oauth2Client.setCredentials({ access_token: tokens.access_token });
 });
 
+
+
 /* const con = mysql.createConnection({
   host: 'localhost',
   user: 'newuser',
@@ -80,7 +82,7 @@ app.get('/auth_callback', (req, res) => {
 
     // Store the credentials given by google into a jsonwebtoken in a cookie called 'jwt'
     // res.setHeader('Cache-Control', 'private');
-    res.cookie('jwt', jwt.sign(token, CONFIG.JWTsecret, { expiresIn: 60 * 60 * 24 }), { domain: 'localhost', path: '/base', httpOnly: true });
+    res.cookie('jwt', jwt.sign(token, CONFIG.JWTsecret, { expiresIn: 60 * 60 * 24 }))//, { domain: 'localhost', path: '/base', httpOnly: true });
     // res.header('Authorization', `Bearer ${token.access_token}`);
     return res.redirect('http://localhost:8080/dashboard/');
   });
@@ -94,12 +96,13 @@ app.get('/auth_callback', (req, res) => {
   });
 }); */
 
-app.get('/test', (req, res) => {
+app.get('/test', (req, response) => {
   oauth2.userinfo.get((err, res) => {
-    if(err){
+    if (err) {
       console.log(err);
-    }else{
+    }else {
       console.log(res);
+      response.send(res.data.email);
     }
   });
 });
