@@ -1,36 +1,64 @@
 <template>
-  <div class="about">
-    <div class="nav">
-      <router-link to="/">homepage</router-link>
-      <router-link to="/dashboard">dashboard</router-link>
-      <router-link to="/add">add new</router-link>
-      <router-link to="/show">show mine</router-link>
-      {{link}}
-    </div>
+  <div class="content">
+    Witaj, {{data.name}}
+    <ul id="database">
+      <li v-for="item in database" v-bind:key="item.id">
+        <div class="ad">
+          <div class="title">{{item.title}}</div>
+          <div class="type">{{item.type}}</div>
+          <div class="description">{{item.description}}</div>
+          <div class="price">{{item.price}}</div>
+          <router-link :to="{name: 'ShowOne', params: {id: item.id}}">Zobacz</router-link>
+        </div>
+      </li>
+    </ul>
   </div>
 </template>
 <script>
 import GoogleService from '@/Services/GoogleService';
+import DatabaseService from '@/Services/DatabaseService';
 
 export default {
   name: 'Dashboard',
   data() {
     return {
-      link: {},
+      data: {},
+      database: {},
     };
   },
   created() {
-    this.getLink();
+    this.getData();
+    this.getEverything();
   },
   methods: {
-    async getLink() {
-      GoogleService.test()
+    async getData() {
+      GoogleService.googleData()
         .then(
           ((event) => {
-            this.$set(this, 'link', event);
+            this.$set(this, 'data', event);
+          }),
+        );
+    },
+    async getEverything() {
+      DatabaseService.getEverything()
+        .then(
+          ((event) => {
+            this.$set(this, 'database', event);
           }),
         );
     },
   },
 };
 </script>
+<style>
+  ul{
+    list-style-type: none;
+  }
+  .ad{
+    max-width: 1000px;
+    background-color: #e1f2fb;
+    margin: 20px auto;
+    padding: 20px;
+    border-radius: 30px;
+  }
+</style>

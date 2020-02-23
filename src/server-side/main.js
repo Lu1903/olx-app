@@ -5,10 +5,11 @@ const jwt = require('jsonwebtoken');
 const cors = require('cors');
 const bodyParser = require('body-parser');
 const CONFIG = require('./google-credentials');
+const DATABASE = require('./database-credentials');
 
 const app = express();
 
-// const mysql = require('mysql');
+const mysql = require('mysql');
 
 app.use(cookieParser());
 app.use(cors());
@@ -32,8 +33,8 @@ app.use((req, res, next) => {
 // eslint-disable-next-line max-len
 const oauth2Client = new google.auth.OAuth2(CONFIG.oauth2Credentials.client_id, CONFIG.oauth2Credentials.client_secret, CONFIG.oauth2Credentials.redirect_uris[0]);
 const loginLink = oauth2Client.generateAuthUrl({
-  access_type: 'offline', // Indicates that we need to be able to access data continously without the user constantly giving us consent
-  scope: CONFIG.oauth2Credentials.scopes, // Using the access scopes from our config file
+  access_type: 'offline',
+  scope: CONFIG.oauth2Credentials.scopes,
 });
 
 const oauth2 = google.oauth2({
@@ -49,22 +50,9 @@ oauth2Client.on('tokens', (tokens) => {
   }
   console.log('Access token: ');
   console.log(tokens.access_token);
-  oauth2Client.setCredentials({ access_token: tokens.access_token });
+  // eslint-disable-next-line max-len
+  oauth2Client.setCredentials({ access_token: tokens.access_token, refresh_token: tokens.refresh_token });
 });
-
-
-
-/* const con = mysql.createConnection({
-  host: 'localhost',
-  user: 'newuser',
-  password: 'B0813aran()16',
-  database: 'olx-app',
-});
-
-con.connect((err) => {
-  if (err) throw err;
-  console.log('Connected!');
-}); */
 
 app.get('/link', (req, res) => res.send(loginLink));
 
@@ -82,27 +70,72 @@ app.get('/auth_callback', (req, res) => {
 
     // Store the credentials given by google into a jsonwebtoken in a cookie called 'jwt'
     // res.setHeader('Cache-Control', 'private');
-    res.cookie('jwt', jwt.sign(token, CONFIG.JWTsecret, { expiresIn: 60 * 60 * 24 }))//, { domain: 'localhost', path: '/base', httpOnly: true });
-    // res.header('Authorization', `Bearer ${token.access_token}`);
+    res.cookie('jwt', jwt.sign(token, CONFIG.JWTsecret));//, { maxAge: 60 * 1000 });
+    // eslint-disable-next-line no-param-reassign
     return res.redirect('http://localhost:8080/dashboard/');
   });
 });
 
-/* app.post('/user', (req, res) => {
+app.get('/GoogleData', (req, response) => {
+  oauth2.userinfo.get((err, res) => {
+    if (err) {
+      throw err;
+    } else {
+      response.send(res.data);
+    }
+  });
+});
+
+const con = mysql.createConnection({
+  host: DATABASE.host,
+  user: DATABASE.user,
+  password: DATABASE.password,
+  database: DATABASE.database,
+});
+
+con.connect((err) => {
+  if (err) throw err;
+  console.log('Connected!');
+});
+
+app.post('/addnew', (req, res) => {
   console.log(req.body);
   res.sendStatus(200);
   con.query('INSERT INTO test SET ?', (req.body), (err, result) => {
     if (err) throw err;
   });
-}); */
+});
 
-app.get('/test', (req, response) => {
+app.get('/everything', (req, res) => {
+  con.query('SELECT * FROM test', (err, result) => {
+    if (err) throw err;
+    res.send(result);
+  });
+});
+
+app.get('/show_mine', (req, response) => {
   oauth2.userinfo.get((err, res) => {
     if (err) {
-      console.log(err);
-    }else {
-      console.log(res);
-      response.send(res.data.email);
+      throw err;
+    } else {
+      con.query('SELECT * from test WHERE email = ?', res.data.email, (error, result) => {
+        if (error) throw error;
+        response.send(result);
+      });
     }
+  });
+});
+
+app.get('/showone/:id', (req, response) => {
+  con.query('SELECT * from test WHERE id = ?', req.params.id, (error, result) => {
+    if (error) throw error;
+    response.send(result[0]);
+  });
+});
+
+app.get('/delete/:id', (req, response) => {
+  con.query('DELETE from test WHERE id = ?', req.params.id, (error, result) => {
+    if (error) throw error;
+    response.send(result[0]);
   });
 });

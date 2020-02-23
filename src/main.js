@@ -7,6 +7,8 @@ import App from './App';
 import router from './router';
 
 Vue.config.productionTip = false;
+// eslint-disable-next-line no-multi-assign
+Vue.isLoggedIn = Vue.prototype.store = '';
 
 /* eslint-disable no-new */
 new Vue({

@@ -16,7 +16,7 @@
       <input type="file" accept="image/*" @change="uploadImage($event)" id="file-input">
       <label for="price">Wpisz cenę:</label>
       <input id="price" type="number" v-model="price">
-      <button type="submit" class="button is-danger">Submit</button>
+      <button type="submit" class="btn waves-effect waves-light">Submit</button>
     </form>
     <div id="preview">
       <img v-if="url" :src="url" />
@@ -26,6 +26,8 @@
 
 <script>
 import axios from 'axios';
+import GoogleService from '@/Services/GoogleService';
+import 'materialize-css/dist/css/materialize.css';
 
 export default {
   name: 'Add',
@@ -37,17 +39,22 @@ export default {
       fileinput: '',
       price: '',
       url: '',
+      email: '',
     };
+  },
+  created() {
+    this.getData();
   },
   methods: {
     submit(e) {
       e.preventDefault();
-      axios.post('http://localhost:3000/user', {
+      axios.post('http://localhost:3000/addnew', {
         title: this.title,
         type: this.type,
         description: this.description,
         fileinput: this.fileinput,
         price: this.price,
+        email: this.email,
       })
         .then((response) => {
           // eslint-disable-next-line no-console
@@ -56,6 +63,12 @@ export default {
         // eslint-disable-next-line no-console
           console.log(error);
         });
+      this.title = '';
+      this.type = '';
+      this.description = '';
+      this.fileinput = '';
+      this.price = '';
+      this.url = '';
     },
     uploadImage(event) {
       const data = new FormData();
@@ -64,9 +77,27 @@ export default {
       this.fileinput = event.target.files[0];
       this.url = URL.createObjectURL(this.fileinput);
     },
+    async getData() {
+      GoogleService.googleData()
+        .then(
+          ((event) => {
+            this.$set(this, 'email', event.email);
+          }),
+        );
+    },
   },
 };
 </script>
 <style scoped>
-
+  .home{
+    max-width: 500px;
+    margin: auto;
+  }
+  input, label{
+    display: block;
+    margin: 10px 0;
+  }
+  label{
+    font-size: 20px;
+  }
 </style>

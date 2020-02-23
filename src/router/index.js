@@ -4,6 +4,7 @@ import Home from '@/components/Home';
 import Dashboard from '@/components/Dashboard';
 import Add from '@/components/Add';
 import Show from '@/components/Show';
+import ShowOne from '@/components/ShowOne';
 import VueCookies from 'vue-cookies';
 
 Vue.use(Router);
@@ -35,6 +36,14 @@ export default new Router({
       path: '/show',
       name: 'Show',
       component: Show,
+      // eslint-disable-next-line no-use-before-define
+      beforeEnter: (to, from, next) => { isLoggedIn(to, from, next); },
+    },
+    {
+      path: '/showone/:id',
+      name: 'ShowOne',
+      component: ShowOne,
+      props: true,
       // eslint-disable-next-line no-use-before-define
       beforeEnter: (to, from, next) => { isLoggedIn(to, from, next); },
     },
