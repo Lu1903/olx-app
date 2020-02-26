@@ -15,6 +15,8 @@ module.exports = {
     client_secret: 'XpXzCCXTCNgWdPwZftxLmx9q',
     redirect_uris: [
       `${baseURL}/auth_callback`,
+      //'http://localhost:8080/dashboard',
+      // 'http://localhost:3000/auth_callback',
     ],
     scopes: [
       'profile',

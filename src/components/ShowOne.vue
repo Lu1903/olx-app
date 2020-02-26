@@ -5,7 +5,7 @@
       <div class="type">{{one.type}}</div>
       <div class="description">{{one.description}}</div>
       <div class="price">{{one.price}}</div>
-      <div class="email"><a :href="`mailto:${item.email}`">{{item.email}}</a></div>
+      <div class="email"><a :href="`mailto:${one.email}`">{{one.email}}</a></div>
     </div>
   </div>
 </template>

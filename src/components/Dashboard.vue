@@ -35,6 +35,7 @@ export default {
       GoogleService.googleData()
         .then(
           ((event) => {
+            console.log(event);
             this.$set(this, 'data', event);
           }),
         );

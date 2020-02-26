@@ -13,7 +13,7 @@
       <label for="description">Wpisz opis:</label>
       <input id="description" type="text" v-model="description">
       <label for="file-input">Wybierz zdjęcie:</label>
-      <input type="file" accept="image/*" @change="uploadImage($event)" id="file-input">
+      <input @change="uploadImage($event)" accept="image/*" name="photo" type="file">
       <label for="price">Wpisz cenę:</label>
       <input id="price" type="number" v-model="price">
       <button type="submit" class="btn waves-effect waves-light">Submit</button>
@@ -27,7 +27,6 @@
 <script>
 import axios from 'axios';
 import GoogleService from '@/Services/GoogleService';
-import 'materialize-css/dist/css/materialize.css';
 
 export default {
   name: 'Add',
@@ -48,6 +47,8 @@ export default {
   methods: {
     submit(e) {
       e.preventDefault();
+      const fdd = new FormData();
+      fdd.append('zdj', this.fileinput);
       axios.post('http://localhost:3000/addnew', {
         title: this.title,
         type: this.type,
@@ -72,7 +73,6 @@ export default {
     },
     uploadImage(event) {
       const data = new FormData();
-      data.append('name', 'my-picture');
       data.append('file', event.target.files[0]);
       this.fileinput = event.target.files[0];
       this.url = URL.createObjectURL(this.fileinput);

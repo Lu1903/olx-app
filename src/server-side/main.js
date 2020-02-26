@@ -6,6 +6,7 @@ const cors = require('cors');
 const bodyParser = require('body-parser');
 const CONFIG = require('./google-credentials');
 const DATABASE = require('./database-credentials');
+const fs = require('fs');
 
 const app = express();
 
@@ -14,8 +15,8 @@ const mysql = require('mysql');
 app.use(cookieParser());
 app.use(cors());
 app.set('views', __dirname);
-app.use(bodyParser.urlencoded({ extended: true }));
-app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: true, limit: '15mb' }));
+app.use(bodyParser.json({ limit: '15mb' }));
 
 // Listen on the port defined in the config file
 app.listen(CONFIG.port, () => {
@@ -67,11 +68,8 @@ app.get('/auth_callback', (req, res) => {
     if (err) {
       return res.redirect('/');
     }
-
     // Store the credentials given by google into a jsonwebtoken in a cookie called 'jwt'
-    // res.setHeader('Cache-Control', 'private');
-    res.cookie('jwt', jwt.sign(token, CONFIG.JWTsecret));//, { maxAge: 60 * 1000 });
-    // eslint-disable-next-line no-param-reassign
+    res.cookie('jwt', jwt.sign(token, CONFIG.JWTsecret)); // , { maxAge: 60 * 1000 });
     return res.redirect('http://localhost:8080/dashboard/');
   });
 });
@@ -79,7 +77,7 @@ app.get('/auth_callback', (req, res) => {
 app.get('/GoogleData', (req, response) => {
   oauth2.userinfo.get((err, res) => {
     if (err) {
-      throw err;
+      response.status(403);
     } else {
       response.send(res.data);
     }
@@ -99,10 +97,9 @@ con.connect((err) => {
 });
 
 app.post('/addnew', (req, res) => {
-  console.log(req.body);
-  res.sendStatus(200);
   con.query('INSERT INTO test SET ?', (req.body), (err, result) => {
     if (err) throw err;
+    res.sendStatus(200);
   });
 });
 
@@ -133,7 +130,7 @@ app.get('/showone/:id', (req, response) => {
   });
 });
 
-app.get('/delete/:id', (req, response) => {
+app.delete('/delete/:id', (req, response) => {
   con.query('DELETE from test WHERE id = ?', req.params.id, (error, result) => {
     if (error) throw error;
     response.send(result[0]);

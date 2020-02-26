@@ -42,11 +42,7 @@ export default {
     },
     fireDelete(id) {
       DatabaseService.delete(id)
-        .then(
-          ((event) => {
-            this.$router.go();
-          }),
-        );
+        .then(this.$router.go());
     },
   },
 };

@@ -6,6 +6,7 @@ import Add from '@/components/Add';
 import Show from '@/components/Show';
 import ShowOne from '@/components/ShowOne';
 import VueCookies from 'vue-cookies';
+import GoogleService from '@/Services/GoogleService';
 
 Vue.use(Router);
 Vue.use(VueCookies);
@@ -49,9 +50,15 @@ export default new Router({
     },
   ],
 });
-function isLoggedIn(to, from, next) {
+async function isLoggedIn(to, from, next) {
   if (window.$cookies.get('jwt')) {
-    next();
+    await GoogleService.googleData()
+      .then((response) => {
+        localStorage.setItem('data', response);
+        next();
+      }).catch((error) => {
+        throw (error);
+      });
   } else {
     next('/');
   }
