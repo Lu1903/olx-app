@@ -1,0 +1,48 @@
+version: '3.3'
+
+services:
+    server-database:
+    build:
+      context: .
+      dockerfile: Dockerfilemysql
+    restart: always
+    environment:
+      MYSQL_DATABASE: 'olx-app'
+      # So you don't have to use root, but you can if you like
+      MYSQL_USER: 'root'
+      # You can use whatever password you like
+      MYSQL_PASSWORD: 'B0813aran()16'
+      # Password for root access
+      MYSQL_ROOT_PASSWORD: 'B0813aran()16'
+    ports:
+      # <Port exposed> : < MySQL Port running inside container>
+      - '3306:3306'
+    command: --init-file /data/application/init.sql
+     # - --default-authentication-plugin=mysql_native_password
+    expose:
+      # Opens port 3306 on the container
+      - '3306'
+      # Where our data will be persisted
+    volumes:
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+
+  client:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - 8080:8080
+    volumes:
+      - ./client:/data/
+      
+  server:
+    build: 
+      context: .
+      dockerfile: DockerFileServer
+    ports:
+      - 3000:3000
+    volumes:
+      - ./server:/data/
+      - ./node_modules
+    #depends_on: 
+    #  - server-database

@@ -84,17 +84,20 @@ app.get('/GoogleData', (req, response) => {
   });
 });
 
-const con = mysql.createConnection({
+/*const con = mysql.createPool({
   host: DATABASE.host,
   user: DATABASE.user,
   password: DATABASE.password,
   database: DATABASE.database,
-});
+}, 20 * 1000);
 
-con.connect((err) => {
-  if (err) throw err;
-  console.log('Connected!');
-});
+/*con.connect((err) => {
+  if (err) {
+    throw err;
+  }else{
+    console.log('Connected!');
+  }
+});*/
 
 app.post('/addnew', (req, res) => {
   con.query('INSERT INTO test SET ?', (req.body), (err, result) => {
