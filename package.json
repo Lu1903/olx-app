@@ -14,21 +14,22 @@
   "dependencies": {
     "axios": "^0.19.2",
     "cookie-parser": "^1.4.4",
+    "cookie-session": "^1.4.0",
     "cors": "^2.8.5",
     "express": "^4.17.1",
+    "express-bearer-token": "^2.4.0",
     "express-vue": "^5.14.1",
+    "googleapis": "^47.0.0",
     "jsonwebtoken": "^8.5.1",
+    "materialize-css": "^1.0.0-rc.2",
     "mysql": "^2.18.1",
+    "node": "^13.10.1",
     "request": "^2.88.2",
     "vue": "^2.5.2",
     "vue-cookies": "^1.6.1",
     "vue-google-login": "^2.0.3",
     "vue-google-oauth2": "^1.4.0",
-    "vue-router": "^3.0.1",
-    "cookie-session": "^1.4.0",
-    "express-bearer-token": "^2.4.0",
-    "googleapis": "^47.0.0",
-    "materialize-css": "^1.0.0-rc.2"
+    "vue-router": "^3.0.1"
   },
   "devDependencies": {
     "autoprefixer": "^7.1.2",

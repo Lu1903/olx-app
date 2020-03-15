@@ -7,6 +7,7 @@ const bodyParser = require('body-parser');
 const CONFIG = require('./google-credentials');
 const DATABASE = require('./database-credentials');
 const fs = require('fs');
+var pool = require('./database')
 
 const app = express();
 
@@ -84,14 +85,14 @@ app.get('/GoogleData', (req, response) => {
   });
 });
 
-/*const con = mysql.createPool({
+/*const con = mysql.createConnection({
   host: DATABASE.host,
   user: DATABASE.user,
   password: DATABASE.password,
   database: DATABASE.database,
 }, 20 * 1000);
 
-/*con.connect((err) => {
+con.connect((err) => {
   if (err) {
     throw err;
   }else{
@@ -100,16 +101,22 @@ app.get('/GoogleData', (req, response) => {
 });*/
 
 app.post('/addnew', (req, res) => {
-  con.query('INSERT INTO test SET ?', (req.body), (err, result) => {
-    if (err) throw err;
-    res.sendStatus(200);
+  pool.getConnection((err, con) => {
+    if(err) res.sendStatus(500);
+    con.query('INSERT INTO test SET ?', (req.body), (err, result) => {
+      if (err) throw err;
+      res.sendStatus(200);
+    });
   });
 });
 
 app.get('/everything', (req, res) => {
-  con.query('SELECT * FROM test', (err, result) => {
-    if (err) throw err;
-    res.send(result);
+  pool.getConnection((err, con) => {
+    if(err) res.sendStatus(500);
+    con.query('SELECT * FROM test', (err, result) => {
+      if (err) throw err;
+      res.send(result);
+    });
   });
 });
 
@@ -118,24 +125,30 @@ app.get('/show_mine', (req, response) => {
     if (err) {
       throw err;
     } else {
-      con.query('SELECT * from test WHERE email = ?', res.data.email, (error, result) => {
-        if (error) throw error;
-        response.send(result);
+      pool.getConnection((err, con) => {
+        con.query('SELECT * from test WHERE email = ?', res.data.email, (error, result) => {
+          if (error) throw error;
+          response.send(result);
+        });
       });
     }
   });
 });
 
 app.get('/showone/:id', (req, response) => {
-  con.query('SELECT * from test WHERE id = ?', req.params.id, (error, result) => {
-    if (error) throw error;
-    response.send(result[0]);
+  pool.getConnection((err, con) => {
+    con.query('SELECT * from test WHERE id = ?', req.params.id, (error, result) => {
+      if (error) throw error;
+      response.send(result[0]);
+    });
   });
 });
 
 app.delete('/delete/:id', (req, response) => {
-  con.query('DELETE from test WHERE id = ?', req.params.id, (error, result) => {
-    if (error) throw error;
-    response.send(result[0]);
+  pool.getConnection((err, con) => {
+    con.query('DELETE from test WHERE id = ?', req.params.id, (error, result) => {
+      if (error) throw error;
+      response.send(result[0]);
+    });
   });
 });

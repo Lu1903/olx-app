@@ -1,4 +1,4 @@
-FROM node:13
+FROM node:13 as build
 
 WORKDIR /client
 
@@ -8,5 +8,10 @@ RUN npm install
 
 COPY . .
 
+RUN npm run build
+
+FROM nginx:alpine
+
+COPY --from=build /client/dist/ /usr/share/nginx/html
+
 EXPOSE 8080
-CMD ["npm", "run", "dev"]
